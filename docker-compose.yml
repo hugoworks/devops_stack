@@ -12,7 +12,7 @@ services:
   nginx:
     image: nginx:latest
     volumes:
-      - ./reverse-proxy/ingress.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - portainer
       - gitea
