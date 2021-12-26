@@ -11,26 +11,14 @@ volumes:
     driver: local
 
 services:
-  #nginx:
-  #  image: 
-  #  build:
-  #    context: .
-  #    dockerfile: ./reverse-proxy/Dockerfile
-  #  depends_on:
-  #    - portainer
-  #    - gitea
-  #    - drone
-  #  ports:
-  #    - "80:80"   # Public HTTP Port
   npm:
     image: jc21/nginx-proxy-manager:latest
+    volumes:
+      - npm_data:/data
     ports:
-      # These ports are in format <host-port>:<container-port>
       - "80:80"   # Public HTTP Port
       - "443:443" # Public HTTPS Port
       - "81:81"   # Admin Web Port
-    volumes:
-      - npm_data:/data
 
   gitea:
     image: gitea/gitea:1.15.8
@@ -43,12 +31,6 @@ services:
 
   droneCI:
     image: drone/drone:2
-    ports:
-      - 6000:80
-      - 7000:443
-    volumes:
-      - drone_data:/var/lib/drone/
-      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - DRONE_GITHUB_SKIP_VERIFY=true
       - DRONE_AGENTS_ENABLED=true
@@ -58,19 +40,25 @@ services:
       - DRONE_OPEN=false
       - DRONE_GITEA=true
       - DRONE_GITEA_SERVER=http://gitea.localdev
-      - DRONE_GITEA_CLIENT_ID=9360a368-dc27-4448-8ae7-8107cf430286
-      - DRONE_GITEA_CLIENT_SECRET=iQWo7fN6O9d1iYzOrM3QdkdMdwsI07O5AzjMtFvxpc5i
+      - DRONE_GITEA_CLIENT_ID=
+      - DRONE_GITEA_CLIENT_SECRET=
       - DRONE_RPC_SECRET=5ae672423a922d3b7bd1cde3fc993f3d
+    volumes:
+      - drone_data:/var/lib/drone/
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 6000:80
+      - 7000:443
 
   portainer:
     image: portainer/portainer-ce:2.11.0
     command: -H tcp://tasks.agent:9001 --tlsskipverify
+    volumes:
+      - portainer_data:/data
     ports:
       - "9443:9443"
       - "9000:9000"
       - "8000:8000"
-    volumes:
-      - portainer_data:/data
     deploy:
       mode: replicated
       replicas: 1
