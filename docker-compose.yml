@@ -10,9 +10,7 @@ volumes:
 
 services:
   nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    build: ./reverse-proxy/Dockerfile
     depends_on:
       - portainer
       - gitea
@@ -40,12 +38,12 @@ services:
     environment:
       - DRONE_GITHUB_SKIP_VERIFY=true
       - DRONE_AGENTS_ENABLED=true
-      - DRONE_SERVER_HOST=http://192.168.56.100:888
+      - DRONE_SERVER_HOST=http://drone.localdev
       - DRONE_SERVER_PROTO=http
       - DRONE_TLS_AUTOCERT=false
       - DRONE_OPEN=false
       - DRONE_GITEA=true
-      - DRONE_GITEA_SERVER=http://192.168.56.100:3000
+      - DRONE_GITEA_SERVER=http://gitea.localdev
       - DRONE_GITEA_CLIENT_ID=9360a368-dc27-4448-8ae7-8107cf430286
       - DRONE_GITEA_CLIENT_SECRET=iQWo7fN6O9d1iYzOrM3QdkdMdwsI07O5AzjMtFvxpc5i
       - DRONE_RPC_SECRET=5ae672423a922d3b7bd1cde3fc993f3d
