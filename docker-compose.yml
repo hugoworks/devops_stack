@@ -1,22 +1,36 @@
 version: "3"
 
 volumes:
-  portainer_data:
+  npm_data:
     driver: local
   gitea_data:
     driver: local
   drone_data:
     driver: local
+  portainer_data:
+    driver: local
 
 services:
-  nginx:
-    build: ./reverse-proxy/Dockerfile
-    depends_on:
-      - portainer
-      - gitea
-      - drone
+  #nginx:
+  #  image: 
+  #  build:
+  #    context: .
+  #    dockerfile: ./reverse-proxy/Dockerfile
+  #  depends_on:
+  #    - portainer
+  #    - gitea
+  #    - drone
+  #  ports:
+  #    - "80:80"   # Public HTTP Port
+  npm:
+    image: jc21/nginx-proxy-manager:latest
     ports:
+      # These ports are in format <host-port>:<container-port>
       - "80:80"   # Public HTTP Port
+      - "443:443" # Public HTTPS Port
+      - "81:81"   # Admin Web Port
+    volumes:
+      - npm_data:/data
 
   gitea:
     image: gitea/gitea:1.15.8
