@@ -49,3 +49,28 @@ services:
       - DRONE_GITEA_CLIENT_ID=9360a368-dc27-4448-8ae7-8107cf430286
       - DRONE_GITEA_CLIENT_SECRET=iQWo7fN6O9d1iYzOrM3QdkdMdwsI07O5AzjMtFvxpc5i
       - DRONE_RPC_SECRET=5ae672423a922d3b7bd1cde3fc993f3d
+
+  portainer:
+    image: portainer/portainer-ce:2.11.0
+    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    ports:
+      - "9443:9443"
+      - "9000:9000"
+      - "8000:8000"
+    volumes:
+      - portainer_data:/data
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  agent:
+    image: portainer/agent:2.11.0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
