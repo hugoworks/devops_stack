@@ -1,5 +1,10 @@
 version: "3"
 
+networks: 
+  default: 
+    external: 
+      name: ingress
+
 volumes:
   npm_data:
     driver: local
