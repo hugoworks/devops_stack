@@ -49,6 +49,19 @@ services:
     ports:
       - 6000:80
       - 7000:443
+  
+  droneCI-runner:
+    image: drone/drone-runner-docker:1
+    environment:
+      - DRONE_RPC_PROTO=http
+      - DRONE_RPC_HOST=http://drone.localdev
+      - DRONE_RPC_SECRET=5ae672423a922d3b7bd1cde3fc993f3d
+      - DRONE_RUNNER_CAPACITY=2
+      - DRONE_RUNNER_NAME=dockerbuil-runner
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 5000:3000
 
   portainer:
     image: portainer/portainer-ce:2.11.0
