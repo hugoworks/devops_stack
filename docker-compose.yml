@@ -1,8 +1,8 @@
 version: "3"
 
 networks: 
-  ingress-stack: 
-    driver: overlay
+  bridge_network:
+    driver: bridge
 
 volumes:
   npm_data:
@@ -20,7 +20,7 @@ services:
     volumes:
       - npm_data:/data
     networks:
-      - ingress-stack
+      - bridge_network
     ports:
       - "80:80"   # Public HTTP Port
       - "443:443" # Public HTTPS Port
@@ -33,7 +33,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     networks:
-      - ingress-stack
+      - bridge_network
     ports:
       - "3000:3000"
 
@@ -55,13 +55,15 @@ services:
       - drone_data:/var/lib/drone/
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - ingress-stack
+      - bridge_network
     ports:
       - 6000:80
       - 7000:443
   
   droneCI-runner:
     image: drone/drone-runner-docker:1
+    extra_hosts:
+      - registry.develop=192.168.56.200
     environment:
       - DRONE_RPC_PROTO=http
       - DRONE_RPC_HOST=drone.master.develop
@@ -71,7 +73,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - ingress-stack
+      - bridge_network
     ports:
       - 5000:3000
 
@@ -81,7 +83,7 @@ services:
     volumes:
       - portainer_data:/data
     networks:
-      - ingress-stack
+      - bridge_network
     ports:
       - "9443:9443"
       - "9000:9000"
@@ -98,7 +100,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
     networks:
-      - ingress-stack
+      - bridge_network
     deploy:
       mode: global
       placement:
