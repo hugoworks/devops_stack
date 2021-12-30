@@ -2,7 +2,9 @@ version: "3"
 
 networks: 
   bridge_network:
+    external: true
     driver: bridge
+    name: docker_gwbridge
 
 volumes:
   npm_data:
