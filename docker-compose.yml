@@ -1,7 +1,7 @@
 version: "3"
 
 networks: 
-  bridge_network:
+  default:
     external: true
     name: docker_gwbridge
 
@@ -20,8 +20,6 @@ services:
     image: jc21/nginx-proxy-manager:latest
     volumes:
       - npm_data:/data
-    networks:
-      - bridge_network
     ports:
       - "80:80"   # Public HTTP Port
       - "443:443" # Public HTTPS Port
@@ -33,8 +31,6 @@ services:
       - gitea_data:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - bridge_network
     ports:
       - "3000:3000"
 
@@ -55,8 +51,6 @@ services:
     volumes:
       - drone_data:/var/lib/drone/
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - bridge_network
     ports:
       - 6000:80
       - 7000:443
@@ -73,8 +67,6 @@ services:
       - DRONE_RUNNER_NAME=dockerbuil-runner
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - bridge_network
     ports:
       - 5000:3000
 
@@ -83,8 +75,6 @@ services:
     command: -H tcp://tasks.agent:9001 --tlsskipverify
     volumes:
       - portainer_data:/data
-    networks:
-      - bridge_network
     ports:
       - "9443:9443"
       - "9000:9000"
@@ -100,8 +90,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
-    networks:
-      - bridge_network
     deploy:
       mode: global
       placement:
