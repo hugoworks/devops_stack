@@ -1,10 +1,5 @@
 version: "3"
 
-networks: 
-  default:
-    external: true
-    name: docker_gwbridge
-
 volumes:
   npm_data:
     driver: local
