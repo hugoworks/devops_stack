@@ -62,8 +62,6 @@ services:
   
   droneCI-runner:
     image: drone/drone-runner-docker:1
-    extra_hosts:
-      - registry.develop=192.168.56.200
     environment:
       - DRONE_RPC_PROTO=http
       - DRONE_RPC_HOST=drone.master.develop
