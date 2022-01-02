@@ -1,5 +1,10 @@
 version: "3"
 
+networks:
+  main:
+    driver: overlay
+    attachable: true
+
 volumes:
   npm_data:
     driver: local
@@ -19,7 +24,8 @@ services:
       - "80:80"   # Public HTTP Port
       - "443:443" # Public HTTPS Port
       - "81:81"   # Admin Web Port
-    network_mode: host
+    networks:
+      - main
 
   gitea:
     image: gitea/gitea:1.15.8
@@ -29,7 +35,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
     ports:
       - "3000:3000"
-    network_mode: host
+    networks:
+      - main
 
   droneCI:
     image: drone/drone:2
@@ -51,7 +58,8 @@ services:
     ports:
       - 6000:80
       - 7000:443
-    network_mode: host
+    networks:
+      - main
   
   droneCI-runner:
     image: drone/drone-runner-docker:1
@@ -65,7 +73,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 5000:3000
-    network_mode: host
+    networks:
+      - main
 
   portainer:
     image: portainer/portainer-ce:2.11.0
@@ -81,14 +90,16 @@ services:
       replicas: 1
       placement:
         constraints: [node.role == manager]
-    network_mode: host
+    networks:
+      - main
 
   agent:
     image: portainer/agent:2.11.0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
-    network_mode: host
+    networks:
+      - main
     deploy:
       mode: global
       placement:
