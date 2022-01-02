@@ -59,6 +59,8 @@ services:
     ports:
       - 6000:80
       - 7000:443
+    dns:
+      - 10.0.2.3
   
   droneCI-runner:
     image: drone/drone-runner-docker:1
@@ -74,6 +76,8 @@ services:
       - mynet
     ports:
       - 5000:3000
+    dns:
+      - 10.0.2.3
 
   portainer:
     image: portainer/portainer-ce:2.11.0
