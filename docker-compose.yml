@@ -1,9 +1,5 @@
 version: "3"
 
-networks: 
-  mynet:
-    driver: overlay
-
 volumes:
   npm_data:
     driver: local
@@ -19,12 +15,11 @@ services:
     image: jc21/nginx-proxy-manager:latest
     volumes:
       - npm_data:/data
-    networks:
-      - mynet
     ports:
       - "80:80"   # Public HTTP Port
       - "443:443" # Public HTTPS Port
       - "81:81"   # Admin Web Port
+    network_mode: host
 
   gitea:
     image: gitea/gitea:1.15.8
@@ -32,10 +27,9 @@ services:
       - gitea_data:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - mynet
     ports:
       - "3000:3000"
+    network_mode: host
 
   droneCI:
     image: drone/drone:2
@@ -54,13 +48,10 @@ services:
     volumes:
       - drone_data:/var/lib/drone/
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - mynet
     ports:
       - 6000:80
       - 7000:443
-    dns:
-      - 10.0.2.3
+    network_mode: host
   
   droneCI-runner:
     image: drone/drone-runner-docker:1
@@ -72,12 +63,9 @@ services:
       - DRONE_RUNNER_NAME=dockerbuil-runner
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - mynet
     ports:
       - 5000:3000
-    dns:
-      - 10.0.2.3
+    network_mode: host
 
   portainer:
     image: portainer/portainer-ce:2.11.0
@@ -93,12 +81,14 @@ services:
       replicas: 1
       placement:
         constraints: [node.role == manager]
+    network_mode: host
 
   agent:
     image: portainer/agent:2.11.0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
+    network_mode: host
     deploy:
       mode: global
       placement:
